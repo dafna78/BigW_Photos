@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Environment>
+    <!-- Timeout -->
+    <TimeOut>5</TimeOut>
+
+    <!--General-->
+    <!--<ImageRego>C:\\Automation\\ProjectsToDisplay\\BigW_Photos\\ImageRepository\\</ImageRego>-->
+    <ImageRego>./ImageRepository</ImageRego>
+
+    <!-- Web -->
+    <BrowserName>chrome</BrowserName>
+    <Url>https://www.bigwphotos.com.au/</Url>
+
+    <!-- Data Driven Testing -->
+    <!-- <DDTFilePath>C:\\Automation\\ProjectsToDisplay\\BigW_Photos\\DDTFiles\\</DDTFilePath> -->
+    <DDTFilePath>./DDTFiles</DDTFilePath>
+
+</Environment>
