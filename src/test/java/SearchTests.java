@@ -21,7 +21,7 @@ public class SearchTests extends CommonOps
         //Perform a search
         WebFlows.performSearch(searchWord);
 
-        Verifications.verifyTextInElementContains(searchResultPage.header_searchResults,"Search results for \"" + searchWord + "\"");
+        Verifications.verifyTextInElementContains(searchResultPage.header_searchResults,"Searchh results for \"" + searchWord + "\"");
     }
 
     /*@Test(description = "Test01 - Verify Home Page Header")
