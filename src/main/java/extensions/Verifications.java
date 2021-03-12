@@ -68,6 +68,26 @@ public class Verifications extends CommonOps
     }
 
     /**
+     * Verifies element is displayed.
+     * @param element WebElement found
+     */
+    @Step("Verify visibility of an element")
+    public static void visibilityOfElement(WebElement element)
+    {
+        assertTrue(element.isDisplayed(), "Element " + element.getText() + " does not display.");
+    }
+
+    /**
+     * Verifies element is not displayed.
+     * @param element WebElement found
+     */
+    @Step("Verify invisibility of an element")
+    public static void invisibilityOfElement(WebElement element)
+    {
+        assertFalse(element.isDisplayed(), "Element " + element.getText() + " is display.");
+    }
+
+    /**
      * Verifies an image on the screen. This method enables you to take an image/region from the screen and save it
      * under 'ImageRepository' folder with extension .png, and then verify it exists.
      * @param expectedImageName the image name under ImageRepository folder, (without the .png)
@@ -130,6 +150,12 @@ public class Verifications extends CommonOps
     public static <T> void softVerifyEquals(T actual, T expected)
     {
         softAssert.assertEquals(actual, expected);
+    }
+
+    @Step("Soft verify parameters are equal")
+    public static void softVerifyExists(Object object)
+    {
+        softAssert.assertNotNull(object);
     }
 
     /**

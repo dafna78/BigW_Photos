@@ -5,14 +5,21 @@
 
     <!--General-->
     <!--<ImageRego>C:\\Automation\\ProjectsToDisplay\\BigW_Photos\\ImageRepository\\</ImageRego>-->
-    <ImageRego>./ImageRepository</ImageRego>
+    <ImageRego>./ImageRepository/</ImageRego>
 
     <!-- Web -->
     <BrowserName>chrome</BrowserName>
-    <Url>https://www.bigwphotos.com.au/</Url>
+    <Url>https://4.app.fujifilmimagine.com/</Url>
+    <UrlPSComputer>photo-selection/computer</UrlPSComputer>
+    <UrlPSMyAlbums>photo-selection/my-albums</UrlPSMyAlbums>
+
 
     <!-- Data Driven Testing -->
     <!-- <DDTFilePath>C:\\Automation\\ProjectsToDisplay\\BigW_Photos\\DDTFiles\\</DDTFilePath> -->
     <DDTFilePath>./DDTFiles</DDTFilePath>
+
+    <!-- Login -->
+    <User>daf.lev@gmail.com</User>
+    <Password>!@#123Qwe</Password>
 
 </Environment>

@@ -2,14 +2,22 @@ package extensions;
 
 import com.google.common.util.concurrent.Uninterruptibles;
 import io.qameta.allure.Step;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import utilities.CommonOps;
+import utilities.SystemOps;
 
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
+import java.sql.Time;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import static extensions.WaitActions.sleepUninterruptibly;
+import static extensions.WaitActions.waitAlert;
 
 /**
  * Common actions for Web
@@ -40,6 +48,33 @@ public class UIActions extends CommonOps
     }
 
     /**
+     * Clear text field send text to the element.
+     * @param element WebElement to send the text to.
+     * @param text the text to set.
+     */
+    @Step("Set element's text after clearing teh field")
+    public static void clearAndSetText(WebElement element, String text)
+    {
+        wait.until(ExpectedConditions.visibilityOf(element));
+        element.clear();
+        element.click();
+        element.sendKeys(text);
+    }
+
+    /**
+     * Clear text field send text to the element.
+     * @param element WebElement to send the text to.
+     * @param text the text to set.
+     */
+    @Step("Set element's text after clearing teh field")
+    public static void clearAndTypeText(WebElement element, String text)
+    {
+        wait.until(ExpectedConditions.visibilityOf(element));
+        element.clear();
+        setTextAsHuman(element, text);
+    }
+
+    /**
      * Sends special keys to the element.
      * @param element WebElement to send the text to.
      * @param key key to send of type Keys.
@@ -62,9 +97,15 @@ public class UIActions extends CommonOps
         wait.until(ExpectedConditions.visibilityOf(element));
         for (char ch : text.toCharArray())
         {
-            Uninterruptibles.sleepUninterruptibly(500, TimeUnit.MILLISECONDS);
+            WaitActions.sleepUninterruptibly(500);
             element.sendKeys(ch + "");
         }
+    }
+
+    public static void setValue(WebElement element, String value)
+    {
+        JavascriptExecutor jse = (JavascriptExecutor)driver;
+        jse.executeScript("arguments[0].value='" + value + "';", element);
     }
 
     /**
@@ -116,6 +157,13 @@ public class UIActions extends CommonOps
         action.build().perform();
     }
 
+    public static void uploadFile(String filePath) throws AWTException
+    {
+        SystemOps.uploadFile(filePath);
+
+        //switch back
+        driver.switchTo().activeElement();
+    }
     /**
      * Get the current browser's url.
      * @return the current url.
@@ -123,5 +171,34 @@ public class UIActions extends CommonOps
     public static String getCurrentUrl()
     {
         return driver.getCurrentUrl();
+    }
+
+    /**
+     * Navigates to page
+     * @param url the url to navigate to
+     */
+    public static void navigateTo(String url)
+    {
+        driver.get(url);
+    }
+
+    /**
+     * @param webElement the found element
+     * @return true / false if the webElement exists and displays
+     */
+    public static boolean exists(WebElement webElement)
+    {
+        try
+        {
+            if((webElement != null) && (webElement.isDisplayed()))
+            {
+                return true;
+            }
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+        return false;
     }
 }

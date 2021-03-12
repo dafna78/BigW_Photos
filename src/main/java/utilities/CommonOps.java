@@ -2,6 +2,7 @@ package utilities;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
@@ -15,6 +16,8 @@ import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.util.concurrent.TimeUnit;
@@ -209,5 +212,31 @@ public class CommonOps extends Base
     public Timestamp getNewTimeStamp()
     {
          return new Timestamp(System.currentTimeMillis());
+    }
+
+    /**
+     * Create an instant of an object
+     * @param classType the type of class to create the object
+     * @param element  the web element that was found and to be 'cast' to the new instant
+     * @param <T> Type of instance
+     * @return Exceptions ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException
+     */
+    public <T> T newInstance(Class<T> classType, WebElement element) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException
+    {
+        //Class<?> clazz = (Class<?>) classType;
+        Object object = Class.forName(classType.getName()).getDeclaredConstructors()[0].newInstance(element);
+        return convertInstanceOfObject(object, classType);
+    }
+
+    public static <T> T convertInstanceOfObject(Object o, Class<T> clazz)
+    {
+        try
+        {
+            return clazz.cast(o);
+        }
+        catch(ClassCastException e)
+        {
+            return null;
+        }
     }
 }

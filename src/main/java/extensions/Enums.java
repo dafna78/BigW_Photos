@@ -5,20 +5,18 @@ import java.util.Map;
 
 public class Enums
 {
-    public enum DesktopMenuButtons
+    public enum TopNavBarButtons
     {
         NULL(""),
-        Home("Home"),
-        Occasions("Occasions"),
-        DigitalPrints("Digital Prints"),
-        CanvasAndWallDecor("Canvas & Wall Decor"),
-        PhotoBooks("Photo Books"),
-        MyKids("My Kids"),
-        MyHome("MyHome");
+        Shop("Shop"),
+        MyProjects("My Projects"),
+        MyPhotos("My Photos"),
+        CreateAccount("Create Account"),
+        SignIn("Sign In");
 
         private String button;
 
-        DesktopMenuButtons(String _button) {
+        TopNavBarButtons(String _button) {
             this.button = _button;
         }
 

@@ -1,28 +1,96 @@
-import extensions.Parse;
+import extensions.Enums.*;
+import extensions.UIActions;
 import extensions.Verifications;
 import io.qameta.allure.Description;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+import pageObjects.webPages.photoThumbnails.AlbumThumb;
 import utilities.CommonOps;
 import workflows.WebFlows;
 
+import static extensions.Helpers.getRandomNumber;
+
 /**
- * Grafana Web tests
+ * My Photos Page tests
  */
 @Listeners(utilities.Listeners.class)
-public class SearchTests extends CommonOps
+public class MyPhotosTests extends CommonOps
 {
-    @Test(description = "Test01 - Verify Results Page Header")
-    @Description("This test performs a search in the search field and verifies the results' page header's text")
-    public void test01_VerifySearchHeader()
+    @Test(description = "Test01 - Verify upload photo to new album")
+    @Description("This test uploads a photo to a new album and verifies the correct album was created and photo was uploaded")
+    public void test01_VerifyUploadPhotoToNewAlbum() throws Exception
     {
-        String searchWord = "Pencil Case";
+        String imageName = "img2.jpg";
+        String newAlbumName = "New Album_" + getRandomNumber(0, 100);
 
-        //Perform a search
-        WebFlows.performSearch(searchWord);
+        int currentNumberOfAlbums;
 
-        Verifications.verifyTextInElementContains(searchResultPage.header_searchResults,"Searchh results for \"" + searchWord + "\"");
+        //Sign in
+        WebFlows.signIn(true, getData("User"), getData("Password"));
+
+        //Go to 'My Photos'
+        WebFlows.navigateToByNavButton(TopNavBarButtons.MyPhotos);
+
+        currentNumberOfAlbums = myPhotosPage.getNumberOfAlbums();
+
+        //Click 'Upload more photos'
+        UIActions.click(myPhotosPage.btn_uploadMorePhotos);
+
+        //Add the photo to a new album
+        WebFlows.addToNewAlbum(newAlbumName);
+
+        //Click 'Computer' to browse files and upload the photo
+        UIActions.click(uploadPhotosToAccountDialog.btn_computer);
+
+        //Windows browsing window to select the image
+        WebFlows.uploadPhotoFromComputer(imageName);
+
+        //Soft assert that the top header displays the correct number of albums
+        Verifications.softVerifyEquals(myPhotosPage.getNumberOfAlbums(), ++currentNumberOfAlbums);
+
+        AlbumThumb albumThumb = myPhotosPage.getAlbumThumb(newAlbumName);
+
+        //Assert the album was created
+        Verifications.verifyExists(albumThumb);
+
+        //Soft assert there is only one photo in the album
+        Verifications.softVerifyEquals(albumThumb.getNumberOfPhotosInAlbum(), "1 photos");
+
+        //Open album
+        albumThumb.open();
+
+        //Verify the correct photo was uploaded
+        Verifications.softVerifyExists((albumPage.getPhotoThumb(imageName)));
+
+        //Verify the name of the album is correct in the header
+        Verifications.softVerifyEquals(albumPage.getAlbumName(), newAlbumName);
+
+        Verifications.assertAll();
     }
+
+    /*//Add the photo to a new album
+        WebFlows.addToNewAlbum(newAlbumName);
+
+    //Soft assert that the button at the bottom displays the correct number of photos
+        Verifications.softVerifyEquals(ps_HeaderPage.btn_addXphotosToProject.getText(), WebFlows.getExpectedTextOnAddPhotosButton(1));
+
+    //Soft assert the correct image was uploaded
+        Verifications.softVerifyExists(ps_PhotoSourcePage.getPhotoThumb(imageName));
+
+        Verifications.assertAll();*/
+
+    /*@Test(description = "Test02 - Verify search auto complete")
+    @Description("This test types a word in the search field and verifies the auto complete field")
+    public void test02_VerifySearchAutoComplete()
+    {
+        String searchWord = "Pencil";
+
+        Verifications.invisibilityOfElement(headerPage.el_searchAutoComplete);
+
+        WebFlows.enterSearchWord(searchWord);
+
+        Verifications.visibilityOfElement(headerPage.el_searchAutoComplete);
+    }*/
 
     /*@Test(description = "Test01 - Verify Home Page Header")
     @Description("This test logins to Grafana and verifies the home page header's text")
