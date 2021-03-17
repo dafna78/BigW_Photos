@@ -24,6 +24,16 @@ import static extensions.WaitActions.waitAlert;
  */
 public class UIActions extends CommonOps
 {
+    public static void focusWindow()
+    {
+        ((JavascriptExecutor) driver).executeScript("window.focus();");
+    }
+
+    public void focusElement(WebElement element)
+    {
+        ((JavascriptExecutor) driver).executeScript("arguments[0].focus();", element);
+    }
+
     /**
      * Click on element.
      * @param element WebElement to click on.
@@ -102,6 +112,7 @@ public class UIActions extends CommonOps
         }
     }
 
+    @Step("Set element's value")
     public static void setValue(WebElement element, String value)
     {
         JavascriptExecutor jse = (JavascriptExecutor)driver;
@@ -177,6 +188,7 @@ public class UIActions extends CommonOps
      * Navigates to page
      * @param url the url to navigate to
      */
+    @Step("Navigate to URL")
     public static void navigateTo(String url)
     {
         driver.get(url);
@@ -200,5 +212,14 @@ public class UIActions extends CommonOps
             return false;
         }
         return false;
+    }
+
+    /**
+     * Refresh the page
+     */
+    @Step("Refresh page")
+    public static void refreshPage()
+    {
+        driver.navigate().refresh();
     }
 }

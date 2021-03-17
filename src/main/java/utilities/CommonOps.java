@@ -1,6 +1,7 @@
 package utilities;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import io.qameta.allure.Step;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -239,4 +240,7 @@ public class CommonOps extends Base
             return null;
         }
     }
+
+    @Step("{0}")
+    public static void log(String text) { }
 }

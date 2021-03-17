@@ -51,8 +51,13 @@ public class AlbumThumb extends PhotoThumbBase
     /**
      * Click to open the album
      */
-    public void open()
+    public void openAlbum()
     {
         element.click();
+    }
+
+    public void openAlbumMenu()
+    {
+        buttonEl.click();
     }
 }

@@ -8,9 +8,7 @@ import org.testng.asserts.SoftAssert;
 import pageObjects.webPages.*;
 import pageObjects.webPages.controls.ThumbsControl;
 import pageObjects.webPages.controls.ThumbsHeaderControl;
-import pageObjects.webPages.dialogs.SelectAlbumDialog;
-import pageObjects.webPages.dialogs.UploadPhotosToAccountDialog;
-import pageObjects.webPages.dialogs.UploadToAlbumDialogBase;
+import pageObjects.webPages.dialogs.*;
 import pageObjects.webPages.navigationBars.PhotoSourceNavBar;
 import pageObjects.webPages.navigationBars.TopNavBar;
 import pageObjects.webPages.photoSelectionPages.*;
@@ -47,6 +45,8 @@ public class Base
     protected static SelectAlbumDialog selectAlbumDialog;
     protected static UploadPhotosToAccountDialog uploadPhotosToAccountDialog;
     protected static UploadToAlbumDialogBase uploadToAlbumDialogBase;
+    protected static RenameAlbumDialog renameAlbumDialog;
+    protected static DeleteAlbumDialog deleteAlbumDialog;
 
     //Navigation bars
     protected static TopNavBar topNavBarPage;

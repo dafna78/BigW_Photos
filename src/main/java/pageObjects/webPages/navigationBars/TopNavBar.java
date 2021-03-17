@@ -17,6 +17,21 @@ public class TopNavBar
     public WebElement getButton(Enums.TopNavBarButtons buttonName)
     {
         String sButtonName = buttonName.getButtonName();
-        return el_topWrapper.findElement(By.xpath(".//button[contains(text(), '" + sButtonName + "')]"));
+        try
+        {
+            return el_topWrapper.findElement(By.xpath(".//button[contains(text(), '" + sButtonName + "')]"));
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
+
+    /**
+     * @return true / false if the Sign In button displays. (otherwise the Sign Out button displays)
+     */
+    public boolean isInSignInState()
+    {
+        return getButton(Enums.TopNavBarButtons.SignIn) != null;
     }
 }

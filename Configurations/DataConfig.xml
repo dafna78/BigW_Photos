@@ -4,8 +4,8 @@
     <TimeOut>5</TimeOut>
 
     <!--General-->
-    <!--<ImageRego>C:\\Automation\\ProjectsToDisplay\\BigW_Photos\\ImageRepository\\</ImageRego>-->
     <ImageRego>./ImageRepository/</ImageRego>
+    <ImgMaxRandomNumber>200</ImgMaxRandomNumber>
 
     <!-- Web -->
     <BrowserName>chrome</BrowserName>

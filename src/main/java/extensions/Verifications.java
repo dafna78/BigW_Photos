@@ -2,7 +2,6 @@ package extensions;
 
 import io.qameta.allure.Step;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.sikuli.script.FindFailed;
 import utilities.CommonOps;
 
@@ -23,7 +22,7 @@ public class Verifications extends CommonOps
     @Step("Verify text in element")
     public static void verifyTextInElement(WebElement element, String expected)
     {
-        wait.until(ExpectedConditions.visibilityOf(element));
+        WaitActions.waitForVisibilityOf(element);
         assertEquals(element.getText(), expected);
     }
 
@@ -35,7 +34,7 @@ public class Verifications extends CommonOps
     @Step("Verify text in element contains")
     public static void verifyTextInElementContains(WebElement element, String expected)
     {
-        wait.until(ExpectedConditions.visibilityOf(element));
+        WaitActions.waitForVisibilityOf(element);
         assertTrue(element.getText().contains(expected));
     }
 
@@ -44,11 +43,11 @@ public class Verifications extends CommonOps
      * @param elements a list of WebElements found
      * @param expected expected number of elements
      */
-    @Step("Verify number of elements")
-    public static void verifyNumberOfElements(List<WebElement> elements, int expected)
+    @Step("{0}")
+    public static void verifyNumberOfElements(String log, List<WebElement> elements, int expected)
     {
         if(expected != 0)
-            wait.until(ExpectedConditions.visibilityOf(elements.get(elements.size()-1)));
+            WaitActions.waitForVisibilityOf(elements.get(elements.size()-1));
 
         assertEquals(elements.size(), expected);
     }
@@ -58,8 +57,8 @@ public class Verifications extends CommonOps
      * will print all elements that do not display, without failing the test in the middle.
      * @param elements a list of WebElements found
      */
-    @Step("Verify visibility of elements")
-    public static void visibilityOfElements(List<WebElement> elements)
+    @Step("{0}")
+    public static void visibilityOfElements(String log, List<WebElement> elements)
     {
         for(WebElement element : elements)
             softAssert.assertTrue(element.isDisplayed(), "Element " + element.getText() + " does not display.");
@@ -71,8 +70,8 @@ public class Verifications extends CommonOps
      * Verifies element is displayed.
      * @param element WebElement found
      */
-    @Step("Verify visibility of an element")
-    public static void visibilityOfElement(WebElement element)
+    @Step("{0}")
+    public static void visibilityOfElement(String log, WebElement element)
     {
         assertTrue(element.isDisplayed(), "Element " + element.getText() + " does not display.");
     }
@@ -81,8 +80,8 @@ public class Verifications extends CommonOps
      * Verifies element is not displayed.
      * @param element WebElement found
      */
-    @Step("Verify invisibility of an element")
-    public static void invisibilityOfElement(WebElement element)
+    @Step("{0}")
+    public static void invisibilityOfElement(String log, WebElement element)
     {
         assertFalse(element.isDisplayed(), "Element " + element.getText() + " is display.");
     }
@@ -111,8 +110,8 @@ public class Verifications extends CommonOps
      * @param actual actual int
      * @param expected expected int
      */
-    @Step("Verify ints are equal")
-    public static void verifyEquals(int actual, int expected)
+    @Step("{0}")
+    public static void verifyEquals(String log, int actual, int expected)
     {
         assertEquals(actual, expected);
     }
@@ -122,8 +121,8 @@ public class Verifications extends CommonOps
      * @param actual the actual text
      * @param expected the expected text
      */
-    @Step("Verify strings are equal")
-    public static void verifyEquals(String actual, String expected)
+    @Step("{0}")
+    public static void verifyEquals(String log, String actual, String expected)
     {
         assertEquals(actual, expected);
     }
@@ -132,8 +131,8 @@ public class Verifications extends CommonOps
      * Verifies the condition/(parameter received) is true. If it is not, an AssertionError is thrown.
      * @param expected the condition to evaluate
      */
-    @Step("Verify the expected is true")
-    public static void verifyTrue(boolean expected)
+    @Step("{0}")
+    public static void verifyTrue(String log, boolean expected)
     {
         assertTrue(expected);
     }
@@ -146,14 +145,14 @@ public class Verifications extends CommonOps
      * @param expected the expected
      * @param <T> the type that is asserted (String, int, etc.)
      */
-    @Step("Soft verify parameters are equal")
-    public static <T> void softVerifyEquals(T actual, T expected)
+    @Step("{0}")
+    public static <T> void softVerifyEquals(String log, T actual, T expected)
     {
         softAssert.assertEquals(actual, expected);
     }
 
-    @Step("Soft verify parameters are equal")
-    public static void softVerifyExists(Object object)
+    @Step("{0}")
+    public static void softVerifyExists(String log, Object object)
     {
         softAssert.assertNotNull(object);
     }
@@ -162,8 +161,8 @@ public class Verifications extends CommonOps
      * Verifies the object exists and is not null. If it is, an AssertionError is thrown
      * @param object the assertion object
      */
-    @Step("Verify the object exists")
-    public static void verifyExists(Object object)
+    @Step("{0}")
+    public static void verifyExists(String log, Object object)
     {
         assertNotNull(object);
     }
@@ -172,8 +171,8 @@ public class Verifications extends CommonOps
      * Verifies the object does not exist / that an object is null. If it is not, an AssertionError, is thrown
      * @param object the assertion object
      */
-    @Step("Verify the object does not exist")
-    public static void verifyDoesNotExist(Object object)
+    @Step("{0}")
+    public static void verifyDoesNotExist(String log, Object object)
     {
         assertNull(object);
     }

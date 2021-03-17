@@ -1,7 +1,9 @@
 package pageObjects.webPages;
 
 import extensions.Parse;
+import extensions.UIActions;
 import extensions.WaitActions;
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -31,5 +33,16 @@ public class UploadedPhotosPageBase extends CommonOps
     public <T> List<T> getListThumbs(Class<T> thumbType) throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException
     {
         return thumbsControl.getListThumbs(thumbType);
+    }
+
+    public <T> List<T> getThumbsByName(Class<T> thumbType, String thumbName) throws Exception
+    {
+        return thumbsControl.getThumbsByName(thumbType, thumbName);
+    }
+
+    @Step("Click on 'Upload more photos' button")
+    public void clickUploadMorePhotos()
+    {
+        UIActions.click(btn_uploadMorePhotos);
     }
 }

@@ -1,12 +1,20 @@
-import extensions.Enums.*;
+import extensions.Enums.TopNavBarButtons;
+import extensions.Parse;
 import extensions.UIActions;
 import extensions.Verifications;
 import io.qameta.allure.Description;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import pageObjects.webPages.photoThumbnails.AlbumThumb;
+import pageObjects.webPages.photoThumbnails.PhotoThumb;
 import utilities.CommonOps;
 import workflows.WebFlows;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static extensions.Helpers.getRandomNumber;
 
@@ -16,172 +24,232 @@ import static extensions.Helpers.getRandomNumber;
 @Listeners(utilities.Listeners.class)
 public class MyPhotosTests extends CommonOps
 {
-    @Test(description = "Test01 - Verify upload photo to new album")
-    @Description("This test uploads a photo to a new album and verifies the correct album was created and photo was uploaded")
+    @Test(description = "   Test01 - Verify upload photo to new album")
+    @Description("This test uploads a photo to a new album with a new name and verifies the correct album was created")
     public void test01_VerifyUploadPhotoToNewAlbum() throws Exception
     {
-        String imageName = "img2.jpg";
-        String newAlbumName = "New Album_" + getRandomNumber(0, 100);
+        String imageName = "img1.jpg";
+        String newAlbumName = "New Album_" + getRandomNumber(0, Parse.toInt(getData("ImgMaxRandomNumber")));
 
-        int currentNumberOfAlbums;
+        //region *******    Steps ****************************************************
 
         //Sign in
-        WebFlows.signIn(true, getData("User"), getData("Password"));
+        if(topNavBarPage.isInSignInState())
+            WebFlows.signIn(true, getData("User"), getData("Password"));
 
-        //Go to 'My Photos'
+        //Go to 'My Photos' page
         WebFlows.navigateToByNavButton(TopNavBarButtons.MyPhotos);
 
-        currentNumberOfAlbums = myPhotosPage.getNumberOfAlbums();
+        //Get current number albums
+        int currentNumberOfAlbums = myPhotosPage.getNumberOfAlbums();
 
-        //Click 'Upload more photos'
-        UIActions.click(myPhotosPage.btn_uploadMorePhotos);
+        //Upload to a new album
+        WebFlows.myPhotos_uploadPhotoToNewAlbum(newAlbumName, imageName);
 
-        //Add the photo to a new album
-        WebFlows.addToNewAlbum(newAlbumName);
+        //endregion
 
-        //Click 'Computer' to browse files and upload the photo
-        UIActions.click(uploadPhotosToAccountDialog.btn_computer);
-
-        //Windows browsing window to select the image
-        WebFlows.uploadPhotoFromComputer(imageName);
+        //region *******    Assertions ***********************************************
 
         //Soft assert that the top header displays the correct number of albums
-        Verifications.softVerifyEquals(myPhotosPage.getNumberOfAlbums(), ++currentNumberOfAlbums);
+        Verifications.softVerifyEquals("Soft assert that the top header displays the correct number of albums", myPhotosPage.getNumberOfAlbums(), ++currentNumberOfAlbums);
 
         AlbumThumb albumThumb = myPhotosPage.getAlbumThumb(newAlbumName);
 
         //Assert the album was created
-        Verifications.verifyExists(albumThumb);
+        Verifications.verifyExists("Assert the album " + newAlbumName +"was created", albumThumb);
 
         //Soft assert there is only one photo in the album
-        Verifications.softVerifyEquals(albumThumb.getNumberOfPhotosInAlbum(), "1 photos");
-
-        //Open album
-        albumThumb.open();
-
-        //Verify the correct photo was uploaded
-        Verifications.softVerifyExists((albumPage.getPhotoThumb(imageName)));
-
-        //Verify the name of the album is correct in the header
-        Verifications.softVerifyEquals(albumPage.getAlbumName(), newAlbumName);
+        Verifications.softVerifyEquals("Soft assert there is only one photo in the album", albumThumb.getNumberOfPhotosInAlbum(), "1 photos");
 
         Verifications.assertAll();
+
+        //endregion
+
+        //Delete the album
+        WebFlows.deleteAlbum(newAlbumName);
     }
 
-    /*//Add the photo to a new album
-        WebFlows.addToNewAlbum(newAlbumName);
-
-    //Soft assert that the button at the bottom displays the correct number of photos
-        Verifications.softVerifyEquals(ps_HeaderPage.btn_addXphotosToProject.getText(), WebFlows.getExpectedTextOnAddPhotosButton(1));
-
-    //Soft assert the correct image was uploaded
-        Verifications.softVerifyExists(ps_PhotoSourcePage.getPhotoThumb(imageName));
-
-        Verifications.assertAll();*/
-
-    /*@Test(description = "Test02 - Verify search auto complete")
-    @Description("This test types a word in the search field and verifies the auto complete field")
-    public void test02_VerifySearchAutoComplete()
+    @Test(description = "Test02 - Verify new album is deleted")
+    @Description("This test creates a new album with the name already allocated to it (today) and then deletes it and verify it was deleted.")
+    public void test02_VerifyNewAlbumIsDeleted() throws Exception
     {
-        String searchWord = "Pencil";
+        String imageName = "img2.jpg";
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String newAlbumName = dateFormat.format(new Date());
 
-        Verifications.invisibilityOfElement(headerPage.el_searchAutoComplete);
+        //region *******    Steps ****************************************************
 
-        WebFlows.enterSearchWord(searchWord);
+        //Sign in
+        if(topNavBarPage.isInSignInState())
+            WebFlows.signIn(true, getData("User"), getData("Password"));
 
-        Verifications.visibilityOfElement(headerPage.el_searchAutoComplete);
-    }*/
+        //Go to 'My Photos' page
+        WebFlows.navigateToByNavButton(TopNavBarButtons.MyPhotos);
 
-    /*@Test(description = "Test01 - Verify Home Page Header")
-    @Description("This test logins to Grafana and verifies the home page header's text")
-    public void test01_VerifyHomePageHeader()
-    {
-        //Login as admin
-        WebFlows.login(getData("GrafanaAdminUser"), getData("GrafanaAdminPassword"));
+        //Click 'Upload more photos'
+        WebFlows.myPhotos_uploadPhotoToNewAlbum(newAlbumName, imageName);
 
-        Verifications.verifyTextInElement(grafanaHomePage.header_welcome,"Welcome to Grafana");
-    }*/
+        //Refresh the page
+        UIActions.refreshPage();
 
-    /*@Test(description = "Test02 - Verify Default Users")
-    @Description("This test navigates to Users page from left menu and verifies the default user")
-    public void test02_VerifyDefaultUsers()
-    {
-        //Login as admin
-        WebFlows.login(getData("GrafanaAdminUser"), getData("GrafanaAdminPassword"));
+        int currentNumberOfAlbums = myPhotosPage.getNumberOfAlbums();
 
-        WebFlows.selectFromLeftMenu(grafanaLeftMenu.btn_server, grafanaServerAdminMenu.link_users);
+        //Delete the album
+        WebFlows.deleteAlbum(newAlbumName);
 
-        Verifications.verifyNumberOfElements(grafanaServerAdminPage.rows, 99);
+        //endregion
+
+        //region *******    Assertions ***********************************************
+
+        //Verify that the top header displays the correct number of albums
+        //Verifications.verifyEquals(myPhotosPage.getNumberOfAlbums(), --currentNumberOfAlbums);
+        Verifications.verifyEquals("Verify that the top header displays the correct number of albums", myPhotosPage.getNumberOfAlbums(), currentNumberOfAlbums);
+
+        //endregion
     }
 
-    @Test(description = "Test03 - Verify New User")
-    @Description("This test navigates to Users page from left menu, ads a new user and verifies it was added")
-    public void test03_VerifyNewUser()
+    @Test(description = "Test03 - Verify upload to new album with same name")
+    @Description("This test uploads a photo to 2 new albums with the same name and verifies the correct number of albums were created")
+    public void test03_VerifyUploadToNewAlbumsWithSameName() throws Exception
     {
-        //Login as admin
-        WebFlows.login(getData("GrafanaAdminUser"), getData("GrafanaAdminPassword"));
+        String imageName = "img3.jpg";
+        String newAlbumName = "New Album_" + getRandomNumber(0, Parse.toInt(getData("ImgMaxRandomNumber")));
+        int currentNumberOfAlbumThumbs;
 
-        WebFlows.selectFromLeftMenu(grafanaLeftMenu.btn_server, grafanaServerAdminMenu.link_users);
+        //region *******    Steps ****************************************************
 
-        WebFlows.createNewUser("daf", "gen", "d@g.com", "12345");
+        //Sign in
+        if(topNavBarPage.isInSignInState())
+            WebFlows.signIn(true, getData("User"), getData("Password"));
 
-        Verifications.verifyNumberOfElements(grafanaServerAdminPage.rows, 2);
+        //Go to 'My Photos'
+        WebFlows.navigateToByNavButton(TopNavBarButtons.MyPhotos);
 
-        WebFlows.deleteLastUser();
-    }
-    @Test(description = "Test04 - Verify User Deletion")
-    @Description("This test navigates to Users page from left menu, deletes a user and verifies it was deleted")
-    public void test04_VerifyUserDeletion()
-    {
-        //Login as admin
-        WebFlows.login(getData("GrafanaAdminUser"), getData("GrafanaAdminPassword"));
+        currentNumberOfAlbumThumbs = myPhotosPage.getListThumbs(AlbumThumb.class).size();
 
-        WebFlows.selectFromLeftMenu(grafanaLeftMenu.btn_server, grafanaServerAdminMenu.link_users);
+        //Create the 1st album and upload the photo
+        WebFlows.myPhotos_uploadPhotoToNewAlbum(newAlbumName, imageName);
 
-        int numberOfUsers = WebFlows.getNumberOfUsers();
+        //Create the 2nd album and upload the photo
+        WebFlows.myPhotos_uploadPhotoToNewAlbum(newAlbumName, imageName);
 
-        //If there is only 1 user, create a new one to prevent deleting the admin
-        if(numberOfUsers == 1)
-            WebFlows.createNewUser("daf", "gen", "d@g.com", "12345");
+        //endregion
 
-        numberOfUsers = WebFlows.getNumberOfUsers();
+        //region *******    Assertions ***********************************************
 
-        WebFlows.deleteLastUser();
+        //Soft assert the current number of albums
+        Verifications.softVerifyEquals("Soft assert the current number of albums", myPhotosPage.getListThumbs(AlbumThumb.class).size(), currentNumberOfAlbumThumbs+2);
 
-        Verifications.verifyNumberOfElements(grafanaServerAdminPage.rows, --numberOfUsers);
-    }
+        List<AlbumThumb> newAlbums = myPhotosPage.getListThumbs(AlbumThumb.class).stream().filter(c -> c.getName().equals(newAlbumName)).collect(Collectors.toList());
 
-    @Test(description = "Test05 - Verify Home Page Help Links Display")
-    @Description("This test verifies all 'Help links' display on home page")
-    public void test05_VerifyHomePageHelpLinksDisplay()
-    {
-        //Login as admin
-        WebFlows.login(getData("GrafanaAdminUser"), getData("GrafanaAdminPassword"));
+        //Verify that only 2 albums are with the same name as the new album name
+        /*Verifications.softVerifyEquals(2, newAlbums.size());*/
+        Verifications.softVerifyEquals("Verify that only 2 albums are with the same name as the new album name", 3, newAlbums.size());
 
-        Verifications.visibilityOfElements(grafanaHomePage.list_needHelpLinks);
-    }
+        //Soft assert there is only one photo in each album
+        for (AlbumThumb album: newAlbums)
+            Verifications.softVerifyEquals(album.getNumberOfPhotosInAlbum(), "1 photos", "Soft assert there is only one photo in each album");
 
-    @Test(description = "Test06 - Verify Avatar Icon")
-    @Description("This test verifies the Avatar icon using Sikuli tool")
-    public void test06_VerifyAvatarIcon()
-    {
-        //Login as admin
-        WebFlows.login(getData("GrafanaAdminUser"), getData("GrafanaAdminPassword"));
+        Verifications.assertAll();
 
-        Verifications.visualElement("grafanaAvatar");
+        //endregion
+
+        //Delete the albums for clean up purpose
+        for (int i=0; i<newAlbums.size(); i++)
+            WebFlows.deleteAlbum(newAlbumName);
     }
 
-    @Test(description = "test07 - Search Users", dataProvider = "data-provider-users", dataProviderClass = utilities.ManageDDT.class)
-    @Description("This test searches using Data Driven Testing")
-    public void test07_SearchUsers(String user, String sExpectedNumberOfUsers)
+    @Test(description = "Test04 - Verify rename new album")
+    @Description("This test uploads a photo to a new album then renames it and verifies the album was renamed correctly")
+    public void test04_VerifyRenameNewAlbum() throws Exception
     {
-        //Login as admin
-        WebFlows.login(getData("GrafanaAdminUser"), getData("GrafanaAdminPassword"));
+        String imageName = "img4.jpg";
+        String albumName = "New Album_" + getRandomNumber(0, Parse.toInt(getData("ImgMaxRandomNumber")));
+        String renamedAlbumName = "Renamed Album_" + getRandomNumber(0, Parse.toInt(getData("ImgMaxRandomNumber")));
 
-        WebFlows.selectFromLeftMenu(grafanaLeftMenu.btn_server, grafanaServerAdminMenu.link_users);
+        //region *******    Steps ****************************************************
 
-        WebFlows.searchUser(user);
+        //Sign in
+        if(topNavBarPage.isInSignInState())
+            WebFlows.signIn(true, getData("User"), getData("Password"));
 
-        Verifications.verifyNumberOfElements(grafanaServerAdminPage.rows, Parse.toInt(sExpectedNumberOfUsers));
-    }*/
+        //Go to 'My Photos' page
+        WebFlows.navigateToByNavButton(TopNavBarButtons.MyPhotos);
+
+        //Create the 1st album and upload a photo
+        WebFlows.myPhotos_uploadPhotoToNewAlbum(albumName, imageName);
+
+        //Create the 2nd album and upload a photo
+        WebFlows.myPhotos_uploadPhotoToNewAlbum(albumName, imageName);
+
+        //Get the current displayed albums
+        int currentNumberOfAlbumThumbs = myPhotosPage.getListThumbs(AlbumThumb.class).size();
+
+        //Rename one album
+        WebFlows.renameAlbum(albumName, renamedAlbumName);
+
+        //endregion
+
+        //region *******    Assertions ***********************************************
+
+         //Soft assert the current number of albums hasn't changed
+        //Verifications.softVerifyEquals(myPhotosPage.getListThumbs(AlbumThumb.class).size(), currentNumberOfAlbumThumbs);
+        Verifications.softVerifyEquals("Soft assert the current number of albums hasn't changed", myPhotosPage.getListThumbs(AlbumThumb.class).size(), ++currentNumberOfAlbumThumbs);
+
+        //Soft assert one album remained with old name and one with new name
+        Verifications.softVerifyEquals("Soft assert one album remained with old name", myPhotosPage.getThumbsByName(AlbumThumb.class, albumName).size(), 1);
+        Verifications.softVerifyEquals("Soft assert one album remained with new name and one with new name", myPhotosPage.getThumbsByName(AlbumThumb.class, renamedAlbumName).size(), 1);
+
+        Verifications.assertAll();
+
+        //endregion
+
+        //Delete the albums for clean up purpose
+        WebFlows.deleteAlbum(albumName);
+        WebFlows.deleteAlbum(renamedAlbumName);
+    }
+
+    @Test(description = "Test05 - Verify photo in new album")
+    @Description("This test uploads a photo to a new album and verifies the photo was uploaded correctly")
+    public void test05_VerifyPhotoInNewAlbum() throws Exception
+    {
+        String imageName = "img5.jpg";
+        String newAlbumName = "New Album_" + getRandomNumber(0, Parse.toInt(getData("ImgMaxRandomNumber")));
+
+        //region *******    Steps ****************************************************
+
+        //Sign in
+        if(topNavBarPage.isInSignInState())
+            WebFlows.signIn(true, getData("User"), getData("Password"));
+
+        //Go to 'My Photos' page
+        WebFlows.navigateToByNavButton(TopNavBarButtons.MyPhotos);
+
+        WebFlows.myPhotos_uploadPhotoToNewAlbum(newAlbumName, imageName);
+
+        //endregion
+
+        //region *******    Assertions ***********************************************
+
+        //Open the album
+        WebFlows.openAlbum(newAlbumName);
+
+        //Verify the correct photo was uploaded
+        Verifications.softVerifyExists("Soft verify that the photo exists", albumPage.getPhotoThumb(imageName));
+
+        //Verify the number of photos in the album is correct
+        //Verifications.softVerifyEquals(albumPage.getThumbsByName(PhotoThumb.class, imageName).size(), 1);
+        Verifications.softVerifyEquals("Verify the number of photos in the album is correct", albumPage.getThumbsByName(PhotoThumb.class, imageName).size(), 2);
+
+        //Verify the name of the album is correct in the header
+        Verifications.softVerifyEquals(albumPage.getAlbumName(), newAlbumName, "Verify the name of the album is correct in the header");
+
+        Verifications.assertAll();
+
+        //endregion
+
+        //Delete the albums for clean up purpose
+        albumPage.goBackToAlbums();
+        WebFlows.deleteAlbum(newAlbumName);
+    }
 }

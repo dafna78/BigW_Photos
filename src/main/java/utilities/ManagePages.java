@@ -4,13 +4,11 @@ import org.openqa.selenium.support.PageFactory;
 import pageObjects.webPages.*;
 import pageObjects.webPages.controls.ThumbsControl;
 import pageObjects.webPages.controls.ThumbsHeaderControl;
-import pageObjects.webPages.dialogs.UploadPhotosToAccountDialog;
-import pageObjects.webPages.dialogs.UploadToAlbumDialogBase;
+import pageObjects.webPages.dialogs.*;
 import pageObjects.webPages.navigationBars.PhotoSourceNavBar;
 import pageObjects.webPages.navigationBars.TopNavBar;
 import pageObjects.webPages.photoSelectionPages.PS_HeaderPage;
 import pageObjects.webPages.photoSelectionPages.PS_PhotoSource_ComputerPage;
-import pageObjects.webPages.dialogs.SelectAlbumDialog;
 
 public class ManagePages extends Base
 {
@@ -31,6 +29,8 @@ public class ManagePages extends Base
         selectAlbumDialog = PageFactory.initElements(driver, SelectAlbumDialog.class);
         uploadPhotosToAccountDialog = PageFactory.initElements(driver, UploadPhotosToAccountDialog.class);
         uploadToAlbumDialogBase = PageFactory.initElements(driver, UploadToAlbumDialogBase.class);
+        renameAlbumDialog = PageFactory.initElements(driver, RenameAlbumDialog.class);
+        deleteAlbumDialog = PageFactory.initElements(driver, DeleteAlbumDialog.class);
 
         //Navigation bars
         photoSourceNavBar = PageFactory.initElements(driver, PhotoSourceNavBar.class);

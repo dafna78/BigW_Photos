@@ -15,7 +15,7 @@ public class PhotoThumbBase extends CommonOps
     public PhotoThumbBase(WebElement _element)
     {
         element = _element;
-        labelEl = element.findElement(By.xpath("//div[@data-qa-node='TextWrapper']/div[@data-qa-node='Title'] | //div[@data-qa-node='Label']"));
+        labelEl = element.findElement(By.xpath(".//div[@data-qa-node='TextWrapper']/div[@data-qa-node='Title'] | //div[@data-qa-node='Label']"));
         img = waitForVisibilityOf(element.findElement(By.tagName("img")));
     }
 

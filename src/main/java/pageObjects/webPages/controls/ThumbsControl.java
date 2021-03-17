@@ -3,12 +3,14 @@ package pageObjects.webPages.controls;
 import extensions.WaitActions;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import pageObjects.webPages.photoThumbnails.AlbumThumb;
 import pageObjects.webPages.photoThumbnails.PhotoThumbBase;
 import utilities.CommonOps;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The area that holds photo's thumbnails
@@ -23,7 +25,17 @@ public class ThumbsControl extends CommonOps
      */
     public List<WebElement> getListThumbsElements()
     {
-        return WaitActions.waitForVisibilityOfAllElements(list_photoThumbs);
+        try
+        {
+            return WaitActions.waitForVisibilityOfAllElements(list_photoThumbs);
+        }
+        catch (Exception e)
+        {
+            if(list_photoThumbs.size() == 0)
+                return list_photoThumbs;
+            else
+                throw e;
+        }
     }
 
     /**
@@ -62,5 +74,18 @@ public class ThumbsControl extends CommonOps
             }
         }
         return null;
+    }
+
+    public <T> List<T> getThumbsByName (Class<T> classType, String thumbName) throws Exception
+    {
+        List<PhotoThumbBase> photoThumbsFilteredListByName = getListThumbs(PhotoThumbBase.class).stream().filter(c -> c.getName().equals(thumbName)).collect(Collectors.toList());
+
+        List<T> listToReturn = new ArrayList<>();
+
+        for (PhotoThumbBase thumb : photoThumbsFilteredListByName)
+        {
+            listToReturn.add(newInstance (classType, thumb.element));
+        }
+        return listToReturn;
     }
 }

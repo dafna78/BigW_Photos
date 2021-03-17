@@ -5,9 +5,9 @@
         <parameter name="PlatformName" value="web" />
         <classes>
             <class name="MyPhotosTests">
-                <!--<methods>
-                    <include name="test01_VerifyHomePageHeader" />
-                </methods>-->
+                <methods>
+                    <!--<include name="test01_VerifyUploadPhotoToNewAlbum"></include>-->
+                </methods>
             </class>
         </classes>
     </test>

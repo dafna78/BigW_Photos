@@ -44,8 +44,11 @@ public class UploadToAlbumDialogBase
     public void addToNewAlbum(String albumName)
     {
         rdBtn_newAlbum.click();
-        txt_newAlbumField.click();
-        UIActions.setValue(txt_newAlbumField, "");
-        UIActions.setText(txt_newAlbumField, albumName);
+        if(!txt_newAlbumField.getAttribute("value").equals(albumName))
+        {
+            txt_newAlbumField.click();
+            UIActions.setValue(txt_newAlbumField, "");
+            UIActions.setText(txt_newAlbumField, albumName);
+        }
     }
 }

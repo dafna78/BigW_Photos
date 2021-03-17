@@ -12,7 +12,8 @@ public class Enums
         MyProjects("My Projects"),
         MyPhotos("My Photos"),
         CreateAccount("Create Account"),
-        SignIn("Sign In");
+        SignIn("Sign In"),
+        SignOut("Sign Out");
 
         private String button;
 

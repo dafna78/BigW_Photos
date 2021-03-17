@@ -1,6 +1,7 @@
 package pageObjects.webPages;
 
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 import pageObjects.webPages.photoThumbnails.AlbumThumb;
 
 import java.lang.reflect.InvocationTargetException;
@@ -32,4 +33,5 @@ public class MyPhotosPage extends UploadedPhotosPageBase
     {
         return thumbsControl.getThumb(AlbumThumb.class, albumName);
     }
+
 }
