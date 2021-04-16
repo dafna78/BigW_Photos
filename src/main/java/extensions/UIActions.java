@@ -11,6 +11,7 @@ import utilities.SystemOps;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.sql.Time;
 import java.util.List;
 import java.util.Set;
@@ -55,6 +56,17 @@ public class UIActions extends CommonOps
     {
         wait.until(ExpectedConditions.visibilityOf(element));
         element.sendKeys(text);
+    }
+
+    public static String getText(WebElement element)
+    {
+        return isElementVisible(element)? element.getText() : null;
+    }
+
+    public static String getText(By by)
+    {
+        WebElement element = WaitActions.waitForVisibilityOf(by);
+        return (element != null)? element.getText() : null;
     }
 
     /**
@@ -168,12 +180,17 @@ public class UIActions extends CommonOps
         action.build().perform();
     }
 
-    public static void uploadFile(String filePath) throws AWTException
-    {
-        SystemOps.uploadFile(filePath);
 
-        //switch back
-        driver.switchTo().activeElement();
+    @Step("Upload file")
+    public static void uploadFile(String filePath) throws IOException
+    {
+        //Copy the file path to the clipboard
+        SystemOps.setClipboardData(filePath);
+
+        //Execute the exe
+        Runtime.getRuntime().exec(getData("ScriptFiles")+ "uploadFile.exe");
+
+        sleepUninterruptibly(2000);
     }
     /**
      * Get the current browser's url.
@@ -212,6 +229,24 @@ public class UIActions extends CommonOps
             return false;
         }
         return false;
+    }
+
+    /**
+     * @param element the element
+     * @return true or false if the element is visible after waiting for it to be visible
+     */
+    public static boolean isElementVisible(WebElement element)
+    {
+        return (WaitActions.waitForVisibilityOf(element) != null);
+    }
+
+    /**
+     * @param by the element locator
+     * @return true or false if the element is visible after waiting for it to be visible
+     */
+    public static boolean isElementVisible(By by)
+    {
+        return (WaitActions.waitForVisibilityOf(by) != null);
     }
 
     /**

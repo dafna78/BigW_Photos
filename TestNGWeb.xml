@@ -6,7 +6,11 @@
         <classes>
             <class name="MyPhotosTests">
                 <methods>
-                    <!--<include name="test01_VerifyUploadPhotoToNewAlbum"></include>-->
+                    <include name="test01_VerifyUploadPhotoToNewAlbum"></include>
+                    <include name="test02_VerifyNewAlbumIsDeleted"></include>
+                    <include name="test03_VerifyUploadToNewAlbumsWithSameName"></include>
+                    <include name="test04_VerifyRenameNewAlbum"></include>
+                    <include name="test05_VerifyPhotoInNewAlbum"></include>
                 </methods>
             </class>
         </classes>

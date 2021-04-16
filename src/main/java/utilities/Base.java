@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat;
 public class Base
 {
     //General
-    protected static WebDriverWait wait;
+    protected static WebDriverWait  wait;
     protected static Actions action;
     protected static SoftAssert softAssert;
     protected static Screen screen;

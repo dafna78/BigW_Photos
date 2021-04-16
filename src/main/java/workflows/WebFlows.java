@@ -9,6 +9,8 @@ import pageObjects.webPages.photoThumbnails.AlbumThumb;
 import utilities.CommonOps;
 import utilities.SystemOps;
 
+import java.util.Set;
+
 import static extensions.WaitActions.*;
 
 
@@ -99,7 +101,7 @@ public class WebFlows extends CommonOps
      * @param albumName album name (album to to delete)
      * @throws Exception Throws and exception in case the album cannot be found.
      */
-    @Step("Test Flow: Delete album")
+    @Step("Test Flow: Delete album {0}")
     public static void deleteAlbum(String albumName) throws Exception
     {
         try
@@ -217,6 +219,8 @@ public class WebFlows extends CommonOps
         uploadPhotosToAccountDialog.clickcomputerBtn();
 
         uploadPhotoFromComputer(imageName);
+
+        sleepUninterruptibly(1000);
     }
 
 }

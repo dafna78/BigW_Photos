@@ -34,7 +34,7 @@ public class AlbumPage extends UploadedPhotosPageBase
      */
     public String getAlbumName()
     {
-        return txt_albumName.getText();
+        return UIActions.getText(txt_albumName);
     }
 
     public void goBackToAlbums()

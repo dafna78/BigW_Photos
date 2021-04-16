@@ -1,20 +1,25 @@
 package pageObjects.webPages.dialogs;
 
 import extensions.UIActions;
+import extensions.WaitActions;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 /**
  * Photo Selection Header elements
  */
 public class UploadToAlbumDialogBase
 {
+    @FindBy(xpath = "//div[@data-qa-node='Inner' and @open]")
+    public WebElement win_dialog;
+
     //Existing album radio button
     @FindBy(xpath = "//input[@type='radio' and @value='existing']")
     public WebElement rdBtn_existingAlbum;
 
     //New album radio button
-    @FindBy(xpath = "//input[@type='radio' and @value='new']")
+    @FindBy(xpath = "//div[@data-qa-node='Inner' and @open]//input[@type='radio' and @value='new']")
     public WebElement rdBtn_newAlbum;
 
     //New album text field
@@ -43,7 +48,11 @@ public class UploadToAlbumDialogBase
      */
     public void addToNewAlbum(String albumName)
     {
+        WaitActions.waitForVisibilityOf(win_dialog);
+        WaitActions.sleepUninterruptibly(1000);
+
         rdBtn_newAlbum.click();
+
         if(!txt_newAlbumField.getAttribute("value").equals(albumName))
         {
             txt_newAlbumField.click();

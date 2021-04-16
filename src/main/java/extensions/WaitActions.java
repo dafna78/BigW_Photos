@@ -2,15 +2,11 @@ package extensions;
 
 import com.google.common.util.concurrent.Uninterruptibles;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import utilities.CommonOps;
-import workflows.WebFlows;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -54,7 +50,15 @@ public class WaitActions extends CommonOps
 
     public static List<WebElement> waitForVisibilityOfAllElements(List<WebElement> webElements)
     {
-        return wait.until(ExpectedConditions.visibilityOfAllElements(webElements));
+        try
+        {
+            return wait.until(ExpectedConditions.visibilityOfAllElements(webElements));
+        }
+        catch (Exception e)
+        {
+            System.out.println("Not all elements are visible after " + getData("TimeOut") + " seconds.");
+            return null;
+        }
     }
 
     public static void waitForInvisibilityOf(WebElement webElement)
@@ -64,7 +68,28 @@ public class WaitActions extends CommonOps
 
     public static WebElement waitForVisibilityOf(WebElement webElement)
     {
-        return wait.until(ExpectedConditions.visibilityOf(webElement));
+        try
+        {
+            return wait.until(ExpectedConditions.visibilityOf(webElement));
+        }
+        catch (Exception e)
+        {
+            System.out.println("Element is not visible after " + getData("TimeOut") + " seconds.");
+            return null;
+        }
+    }
+
+    public static WebElement waitForVisibilityOf(By by)
+    {
+        try
+        {
+            return wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+        }
+        catch (Exception e)
+        {
+            System.out.println("Element is not visible after " + getData("TimeOut") + " seconds.");
+            return null;
+        }
     }
 
     public static void waitElementNotToBeClickable(WebElement webElement)

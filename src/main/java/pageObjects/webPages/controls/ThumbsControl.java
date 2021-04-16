@@ -3,7 +3,6 @@ package pageObjects.webPages.controls;
 import extensions.WaitActions;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import pageObjects.webPages.photoThumbnails.AlbumThumb;
 import pageObjects.webPages.photoThumbnails.PhotoThumbBase;
 import utilities.CommonOps;
 
@@ -25,17 +24,9 @@ public class ThumbsControl extends CommonOps
      */
     public List<WebElement> getListThumbsElements()
     {
-        try
-        {
-            return WaitActions.waitForVisibilityOfAllElements(list_photoThumbs);
-        }
-        catch (Exception e)
-        {
-            if(list_photoThumbs.size() == 0)
-                return list_photoThumbs;
-            else
-                throw e;
-        }
+        if(list_photoThumbs.size() == 0)
+            return list_photoThumbs;
+        return WaitActions.waitForVisibilityOfAllElements(list_photoThumbs);
     }
 
     /**
