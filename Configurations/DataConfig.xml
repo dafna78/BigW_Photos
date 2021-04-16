@@ -6,6 +6,7 @@
     <!--General-->
     <ImageRego>./ImageRepository/</ImageRego>
     <ImgMaxRandomNumber>200</ImgMaxRandomNumber>
+    <ScriptFiles>./ScriptFiles/</ScriptFiles>
 
     <!-- Web -->
     <BrowserName>chrome</BrowserName>

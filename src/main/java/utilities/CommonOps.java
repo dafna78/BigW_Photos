@@ -48,7 +48,6 @@ public class CommonOps extends Base
                 throw new RuntimeException("Invalid platform name");
         }
 
-        softAssert = new SoftAssert();
         screen = new Screen();
     }
 
@@ -68,6 +67,7 @@ public class CommonOps extends Base
     @BeforeMethod
     public void beforeMethod(Method method)
     {
+        softAssert = new SoftAssert();
         try
         {
             MonteScreenRecorder.startRecord(method.getName());
@@ -115,6 +115,7 @@ public class CommonOps extends Base
 
         //Timeouts
         initTimeouts();
+
     }
 
     //*******************************************

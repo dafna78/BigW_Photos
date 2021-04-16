@@ -3,6 +3,7 @@ import extensions.Parse;
 import extensions.UIActions;
 import extensions.Verifications;
 import io.qameta.allure.Description;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import pageObjects.webPages.photoThumbnails.AlbumThumb;
@@ -12,6 +13,7 @@ import workflows.WebFlows;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,12 +26,15 @@ import static extensions.Helpers.getRandomNumber;
 @Listeners(utilities.Listeners.class)
 public class MyPhotosTests extends CommonOps
 {
-    @Test(description = "   Test01 - Verify upload photo to new album")
+    List<String> albumsTested = new ArrayList<>();
+
+    @Test(description = "Test01 - Verify upload photo to new album")
     @Description("This test uploads a photo to a new album with a new name and verifies the correct album was created")
     public void test01_VerifyUploadPhotoToNewAlbum() throws Exception
     {
         String imageName = "img1.jpg";
         String newAlbumName = "New Album_" + getRandomNumber(0, Parse.toInt(getData("ImgMaxRandomNumber")));
+        albumsTested.add(newAlbumName);
 
         //region *******    Steps ****************************************************
 
@@ -56,7 +61,7 @@ public class MyPhotosTests extends CommonOps
         AlbumThumb albumThumb = myPhotosPage.getAlbumThumb(newAlbumName);
 
         //Assert the album was created
-        Verifications.verifyExists("Assert the album " + newAlbumName +"was created", albumThumb);
+        Verifications.verifyExists("Assert the album " + newAlbumName +" was created", albumThumb);
 
         //Soft assert there is only one photo in the album
         Verifications.softVerifyEquals("Soft assert there is only one photo in the album", albumThumb.getNumberOfPhotosInAlbum(), "1 photos");
@@ -64,9 +69,6 @@ public class MyPhotosTests extends CommonOps
         Verifications.assertAll();
 
         //endregion
-
-        //Delete the album
-        WebFlows.deleteAlbum(newAlbumName);
     }
 
     @Test(description = "Test02 - Verify new album is deleted")
@@ -102,8 +104,7 @@ public class MyPhotosTests extends CommonOps
         //region *******    Assertions ***********************************************
 
         //Verify that the top header displays the correct number of albums
-        //Verifications.verifyEquals(myPhotosPage.getNumberOfAlbums(), --currentNumberOfAlbums);
-        Verifications.verifyEquals("Verify that the top header displays the correct number of albums", myPhotosPage.getNumberOfAlbums(), currentNumberOfAlbums);
+        Verifications.verifyEquals("Verify that the top header displays the correct number of albums", myPhotosPage.getNumberOfAlbums(), --currentNumberOfAlbums);
 
         //endregion
     }
@@ -114,7 +115,8 @@ public class MyPhotosTests extends CommonOps
     {
         String imageName = "img3.jpg";
         String newAlbumName = "New Album_" + getRandomNumber(0, Parse.toInt(getData("ImgMaxRandomNumber")));
-        int currentNumberOfAlbumThumbs;
+        albumsTested.add(newAlbumName);
+        albumsTested.add(newAlbumName);
 
         //region *******    Steps ****************************************************
 
@@ -125,7 +127,7 @@ public class MyPhotosTests extends CommonOps
         //Go to 'My Photos'
         WebFlows.navigateToByNavButton(TopNavBarButtons.MyPhotos);
 
-        currentNumberOfAlbumThumbs = myPhotosPage.getListThumbs(AlbumThumb.class).size();
+        int currentNumberOfAlbumThumbs = myPhotosPage.getListThumbs(AlbumThumb.class).size();
 
         //Create the 1st album and upload the photo
         WebFlows.myPhotos_uploadPhotoToNewAlbum(newAlbumName, imageName);
@@ -143,20 +145,16 @@ public class MyPhotosTests extends CommonOps
         List<AlbumThumb> newAlbums = myPhotosPage.getListThumbs(AlbumThumb.class).stream().filter(c -> c.getName().equals(newAlbumName)).collect(Collectors.toList());
 
         //Verify that only 2 albums are with the same name as the new album name
-        /*Verifications.softVerifyEquals(2, newAlbums.size());*/
-        Verifications.softVerifyEquals("Verify that only 2 albums are with the same name as the new album name", 3, newAlbums.size());
+        Verifications.softVerifyEquals("Verify that only 2 albums are with the same name as the new album name", newAlbums.size(), 2);
 
         //Soft assert there is only one photo in each album
         for (AlbumThumb album: newAlbums)
-            Verifications.softVerifyEquals(album.getNumberOfPhotosInAlbum(), "1 photos", "Soft assert there is only one photo in each album");
+            Verifications.softVerifyEquals("Soft assert there is only one photo in album", album.getNumberOfPhotosInAlbum(), "1 photos");
 
         Verifications.assertAll();
 
         //endregion
 
-        //Delete the albums for clean up purpose
-        for (int i=0; i<newAlbums.size(); i++)
-            WebFlows.deleteAlbum(newAlbumName);
     }
 
     @Test(description = "Test04 - Verify rename new album")
@@ -166,6 +164,8 @@ public class MyPhotosTests extends CommonOps
         String imageName = "img4.jpg";
         String albumName = "New Album_" + getRandomNumber(0, Parse.toInt(getData("ImgMaxRandomNumber")));
         String renamedAlbumName = "Renamed Album_" + getRandomNumber(0, Parse.toInt(getData("ImgMaxRandomNumber")));
+        albumsTested.add(albumName);
+        albumsTested.add(renamedAlbumName);
 
         //region *******    Steps ****************************************************
 
@@ -193,8 +193,7 @@ public class MyPhotosTests extends CommonOps
         //region *******    Assertions ***********************************************
 
          //Soft assert the current number of albums hasn't changed
-        //Verifications.softVerifyEquals(myPhotosPage.getListThumbs(AlbumThumb.class).size(), currentNumberOfAlbumThumbs);
-        Verifications.softVerifyEquals("Soft assert the current number of albums hasn't changed", myPhotosPage.getListThumbs(AlbumThumb.class).size(), ++currentNumberOfAlbumThumbs);
+        Verifications.softVerifyEquals("Soft assert the current number of albums hasn't changed after the rename", myPhotosPage.getListThumbs(AlbumThumb.class).size(), currentNumberOfAlbumThumbs);
 
         //Soft assert one album remained with old name and one with new name
         Verifications.softVerifyEquals("Soft assert one album remained with old name", myPhotosPage.getThumbsByName(AlbumThumb.class, albumName).size(), 1);
@@ -203,10 +202,6 @@ public class MyPhotosTests extends CommonOps
         Verifications.assertAll();
 
         //endregion
-
-        //Delete the albums for clean up purpose
-        WebFlows.deleteAlbum(albumName);
-        WebFlows.deleteAlbum(renamedAlbumName);
     }
 
     @Test(description = "Test05 - Verify photo in new album")
@@ -215,6 +210,7 @@ public class MyPhotosTests extends CommonOps
     {
         String imageName = "img5.jpg";
         String newAlbumName = "New Album_" + getRandomNumber(0, Parse.toInt(getData("ImgMaxRandomNumber")));
+        albumsTested.add(newAlbumName);
 
         //region *******    Steps ****************************************************
 
@@ -238,18 +234,36 @@ public class MyPhotosTests extends CommonOps
         Verifications.softVerifyExists("Soft verify that the photo exists", albumPage.getPhotoThumb(imageName));
 
         //Verify the number of photos in the album is correct
-        //Verifications.softVerifyEquals(albumPage.getThumbsByName(PhotoThumb.class, imageName).size(), 1);
-        Verifications.softVerifyEquals("Verify the number of photos in the album is correct", albumPage.getThumbsByName(PhotoThumb.class, imageName).size(), 2);
+        Verifications.softVerifyEquals("Verify the number of photos in the album is correct", albumPage.getThumbsByName(PhotoThumb.class, imageName).size(), 1);
 
         //Verify the name of the album is correct in the header
-        Verifications.softVerifyEquals(albumPage.getAlbumName(), newAlbumName, "Verify the name of the album is correct in the header");
+        Verifications.softVerifyEquals("Verify the name of the album is correct in the header", albumPage.getAlbumName(), newAlbumName);
 
         Verifications.assertAll();
 
         //endregion
+    }
 
-        //Delete the albums for clean up purpose
-        albumPage.goBackToAlbums();
-        WebFlows.deleteAlbum(newAlbumName);
+    /**
+     * Delete the albums for clean up purpose
+     */
+    @AfterClass(description = "Deleting all used albums")
+    public void deleteAllUsedAlbums()
+    {
+        //Go to 'My Photos' page
+        WebFlows.navigateToByNavButton(TopNavBarButtons.MyPhotos);
+
+        for (String albumName: albumsTested)
+        {
+            try
+            {
+                UIActions.refreshPage();
+                WebFlows.deleteAlbum(albumName);
+            }
+            catch (Exception e)
+            {
+                continue;
+            }
+        }
     }
 }
